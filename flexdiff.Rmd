@@ -124,14 +124,12 @@ In flextable you can use a variety of formatting techniques to draw attention to
 
 # An Example ...in progress
 
-This prototype uses and extends the ideas presented in this tutorial. 
-
 In some environments, statistical output are created and exported by programming staff in software other than R. These results are usually provided to the team responsible for writing the study report or performing quality checks. As this process is usually iterative, differences between rounds of results are likely to exist. 
 
 The prototype is intended to help the writing team review and spot differences tables in an interactive fashion. This is somewhat predicated on the statistical tables being standardized (i.e. predictable) in nature.
 
 
-Below is the original table.
+Below is the original table. The table file was initially provided as a CSV.
 
 ![](assets/org.png)
 
@@ -139,10 +137,14 @@ Below is an updated table.
 
 ![](assets/revise.org.png)
 
+mark { 
+  background-color: yellow;
+  color: black;
+}
 
-Cell differences are highlighted in yellow, while additional columns and rows are color coded for identification.
+Cell differences are <mark>highlighted</mark>, while additional <span style="color: red;">columns</span> and <span style="color: orange;">text</span> are color coded for identification.
 
 
-If you are interested in the prototype, you can view my progress [here](https://github.com/mattkumar/flexdiff)
+If you are interested in the prototype, you can view some of my progress [here](https://github.com/mattkumar/flexdiff)
 
 Thanks!
