@@ -198,7 +198,7 @@ In flextable, you can use a variety of formatting techniques to draw attention t
 
 # Use Case
 
-As part of my current responsibilities, I receieve statistical tables saved as data sets (e.g. .sas7bdat, .csv) that I process in R. Given that this work flow is well established, I looked at whether comparisons between statistical tables were feasible with the packages outlined in this tutorial. One of the primary aims would be to detect changes between versions. If so, another aim would be to develop this into an application for ease of use by non-technical staff. I want to thank my colleague Robert (R.A.) for the inspiration for this work!
+As part of my current responsibilities, I receieve statistical tables saved as data sets (e.g. .sas7bdat, .csv) that I further process in R. Given that this work flow is well established, I looked at whether comparisons between statistical tables were feasible with the packages outlined in this tutorial. One of the primary aims would be to detect changes between versions.
 
 In the first panel, I have the initial version of a table.
 
