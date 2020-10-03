@@ -215,7 +215,7 @@ I've setup the following schema to highlight differences:
 * New columns are in pink, with a boarder
 * New rows are highlighted in green
 * I have a hardcoded a rule to highlight in yellow the prescence of `-9999` in the `P` column. 
-  + You'll also notice the background for this cell is blue, because this cell value is also different from the original table.
+  + The background for this cell is blue, because this cell value is also different from the original table.
 
 
 If you are interested in the code for this example, you can view some of my progress [here](https://github.com/mattkumar/flexdiff).
