@@ -67,7 +67,10 @@ The cell differences between the two data frames are stored in `deltas` as tibbl
 
 You may access them like so:
 ```{r}
+#cell differences that involve the variable sex
 deltas$VarDiff_sex
+
+#cell differences that involve the variable smk
 deltas$VarDiff_smk
 ```
 
