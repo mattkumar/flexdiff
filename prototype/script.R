@@ -1,7 +1,10 @@
+#this script uses the dev version of flextable
+#devtools::install_github("davidgohel/flextable")
 library(tidyverse)
 library(flextable)
 library(diffdf)
 library(readr)
+library(officer)
 
 #load data sets provided
 df_1 <- 
@@ -63,7 +66,13 @@ df_2 %>%
   flextable() %>%
   (function(x){
     for (i in 1:nrow(delta_data)) {
-      x <- bg(x, i=delta_data$rownumber[[i]], j=delta_data$variable[[i]], bg="yellow", part="body")
+      x <- highlight(x, 
+                     i=delta_data$rownumber[[i]], 
+                     j=delta_data$variable[[i]], 
+                     color="skyblue", 
+                     part="body") %>% 
+           bold(i=delta_data$rownumber[[i]], 
+                j=delta_data$variable[[i]])
     }
     x
   })() %>%
@@ -71,7 +80,10 @@ df_2 %>%
   #Extra Rows
   (function(x){
     for (i in 1:nrow(extra_rows)) {
-      x <- color(x, i=extra_rows$rownumber[[i]], color="orange", part="body")
+      x <- color(x, 
+                 i=extra_rows$rownumber[[i]], 
+                 color="red", 
+                 part="body") 
     }
     x
   })() %>%
@@ -79,14 +91,20 @@ df_2 %>%
   #Extra Columns
   (function(x){
     for (i in 1:nrow(extra_cols)) {
-      x <- color(x, j=extra_cols$columns[[i]], color="red", part="all")
+      x <-  border(x, 
+               i=NULL,  
+               j=extra_cols$columns[[i]],
+               border = fp_border(color = "green", style="dashed", width=1.5), 
+               part = "all")   
+      
     }
     x
   })() %>%
   autofit() %>%
-  flextable::align(align="left", part="body") %>%
-  flextable::padding(j=1, i=indent_df_2, padding.left = 20, part="body") %>%
-  flextable::bold(j=1, i=bold_df_2, part="body")
+  align(align="left", part="body") %>%
+  padding(j=1, i=indent_df_2, padding.left = 20, part="body") %>%
+  bold(j=1, i=bold_df_2, part="body") %>%
+  highlight(j="P", i = ~ P == "-9999", color = "yellow", part="body")
 
 
 

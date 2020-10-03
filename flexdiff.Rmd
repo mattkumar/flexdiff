@@ -5,8 +5,8 @@ date: "10/3/2020"
 output: 
   html_document:
     toc: true
-    toc_float: false
-    theme: journal
+    toc_float: true
+    theme: united
 ---
 
  ```{r setup, include=FALSE}
@@ -17,10 +17,12 @@ library(dplyr)
 ```
 
 # Intro
-In this tutorial, I'll share my learnings on how to leverage `diffdf` and `flextable` to visualize differences between two data frames.
+
+In this guide, I'll share my learnings on how to leverage `diffdf` and `flextable` to spot differences between two data frames. I provide a real world use case that builds on the concepts presented at the end.
 
 # From Scratch
-Let's create two data sets that have slight differences. We'll assume only the cell values between the two data frames can differ, and that the number of observations (rows) and variables (columns) are similar.
+
+I'll begin by creating two data frames that have slight differences. Assume that the cell values between the two data frames can differ while the number of observations (rows) and variables (columns) are similar.
 
 ```{r}
 library(flextable)
@@ -45,9 +47,9 @@ df2 %>% flextable()
 ```
 
 # Comparing with diffdf
-Let's use the `diffdf` package to find and return differences between two data frames. 
+The `diffdf` package can be used to find and return differences between two data frames. 
 
-Below I create an object named `deltas` that will store the results of the `diffdf` call. 
+Below I create an object named `deltas` that will store the results of the `diffdf` call on the two data frames I created. 
 
 I've specified that `df1` is the base (or "original") and that `df2` is the comparator.
 
@@ -55,15 +57,17 @@ I've specified that `df1` is the base (or "original") and that `df2` is the comp
 deltas <- diffdf(base=df1, compare=df2)
 ```
 
-Cell differences are stored in `deltas` as tibbles and are index by variable. You can accessed them like so:
+The cell differences between the two data frames are stored in `deltas` as tibbles and are index by variable.
+
+You may access them like so:
 ```{r}
 deltas$VarDiff_sex
 deltas$VarDiff_smk
 ```
 
-The value of `VARIABLE` gives a natural column index, while the value of `..ROWNUMBER..` gives the row index. Together, these coordinates provide us a road map of precisely what cells in `df2` differ from those in `df1`.
+Within each of the variable tibbles, the value of `VARIABLE` gives a natural column index, while the value of `..ROWNUMBER..` gives a row index. Together, these coordinates provide us a road map of precisely which cells in `df2` differ from those in `df1`.
 
-We'll need to extract, clean and store each variables results so that this information can be readily used. In this example, I use a loop to account for many variables at once.
+We need to extract, clean and store each variables results so that this information can be readily used for styling. In this example, I use a loop to account for many variables at once.
 
 ```{r}
 #get variable names
@@ -86,15 +90,18 @@ delta_data = do.call(rbind, delta_list)
 delta_data
 ```
 
-# Visualizing Differences
-We can now use `delta_data` to style the flextable for `df2`. I've chosen set the background color of cells in `df2` to yellow to demonstrate cell differences.
+# Styling Differences
+We can now use `delta_data` to style the flextable for `df2`. Below are a few examples of how to do this.
 
+## Ex1 - Background colors
+Change the background color for cells of interest.
 ```{r}
 df2 %>% 
   flextable() %>%
   #Style rows individually from delta_data
   (function(x){
     for (i in 1:nrow(delta_data)) {
+      #bg() is the flextable styling function
       x <- bg(x, 
               i=delta_data$rownumber[[i]], 
               j=delta_data$variable[[i]], 
@@ -102,49 +109,116 @@ df2 %>%
               part="body")}
     x
   })()
-
-df1 %>%
-  flextable()
-
 ```
 
+`df1` side by side for comparisons.
+```{r}
+df1 %>%
+  flextable()
+```
+ 
 
+## Ex2 - Cell Borders
+Adding a border around cells of interest. Note: This requires the `officer` package. 
+
+```{r}
+library(officer)
+
+df2 %>% 
+  flextable() %>%
+  #Style rows individually from delta_data
+  (function(x){
+    for (i in 1:nrow(delta_data)) {
+      #border() is the flextable styling function
+      x <- border(x, 
+              i=delta_data$rownumber[[i]], 
+              j=delta_data$variable[[i]], 
+              #fp_border() is from officer
+              border=fp_border(color = "black", style="dashed", width=1.5), 
+              part="body")
+      }
+    x
+  })()
+```
+
+## Ex3 - Font Color
+You can change the font color in a very similar way.
+```{r}
+df2 %>% 
+  flextable() %>%
+  #Style rows individually from delta_data
+  (function(x){
+    for (i in 1:nrow(delta_data)) {
+      #color() is the flextable styling function
+      x <- color(x, 
+              i=delta_data$rownumber[[i]], 
+              j=delta_data$variable[[i]], 
+              color="red",
+              part="body")
+      }
+    x
+  })()
+```
+
+## Ex4 - Combining Styles
+It's straight forward to combine styling functions using the pipe operator.
+
+```{r}
+df2 %>% 
+  flextable() %>%
+  #Style rows individually from delta_data
+  (function(x){
+    for (i in 1:nrow(delta_data)) {
+      #piping together two flextable styling functions
+      x <- border(x, 
+              i=delta_data$rownumber[[i]], 
+              j=delta_data$variable[[i]], 
+              border=fp_border(color = "black", style="dashed", width=1.5), 
+              part="body") %>%
+           bg(x, 
+                i=delta_data$rownumber[[i]], 
+                j=delta_data$variable[[i]], 
+                bg="skyblue",
+                part="body")
+      }
+    x
+  })()
+```
 
 # Extensions
 
-The example presented for in this tutorial was very simple and for demonstration purposes. Going forward, the combination of `diffdf` and `flextable` together have the potential to form a powerful work flow for many applications.
+The examples presented for in this tutorial were kept simple for demonstration purposes. Going beyond, the combination of `diffdf` and `flextable` together seem to have the potential to form a powerful work flow tool.
 
 ### diffdf
 In addition to finding individual cell differences, you can also use `diffdf` to return other useful information such as the presence or absence of columns and rows. More on the `diffdf` package can be found [here.](https://cran.r-project.org/web/packages/diffdf/vignettes/diffdf-basic.html)
 
 ### flextable
-In flextable you can use a variety of formatting techniques to draw attention to differences. For example, font (color, size, face) and cell (borders) properties, [among others,](https://davidgohel.github.io/flextable/articles/format.html) can be configured in a straight forward way due to the intuitive design of flextable.
+In flextable, you can use a variety of formatting techniques to draw attention to differences. I've attempted to demonstrate a few of them, and you can view other appraoches [here. ](https://davidgohel.github.io/flextable/articles/format.html) I found it very straight forward to test, adapt and combine different approaches due to the intuitive design of flextable. 
 
 
+# Use Case
 
-# An Example ...in progress
+As part of my current responsibilities, I receieve statistical tables saved as data sets (e.g. .sas7bdat, .csv) that I process in R. Given that this work flow is well established, I looked at whether comparisons between statistical tables were feasible with the packages outlined in this tutorial. One of the primary aims would be to detect changes between versions.
 
-In some environments, statistical output are created and exported by programming staff in software other than R. These results are usually provided to the team responsible for writing the study report or performing quality checks. As this process is usually iterative, differences between rounds of results are likely to exist. 
-
-The prototype is intended to help the writing team review and spot differences tables in an interactive fashion. This is somewhat predicated on the statistical tables being standardized (i.e. predictable) in nature.
-
-
-Below is the original table. The table file was initially provided as a CSV.
+In the first panel, I have the initial version of a table.
 
 ![](assets/org.png)
 
-Below is an updated table.
+In the second panel I have an updated version of a table.
+
 
 ![](assets/revise.org.png)
 
-mark { 
-  background-color: yellow;
-  color: black;
-}
+I've setup the following schema to highlight differences:
 
-Cell differences are <mark>highlighted</mark>, while additional <span style="color: red;">columns</span> and <span style="color: orange;">text</span> are color coded for identification.
+* Cell differences are in sky blue, with a boarder
+* New columns are in pink, with a boarder
+* New rows are highlighted in green
+* I have a hardcoded a rule to highlight in yellow the prescence of `-9999` in the `P` column. 
+  + You'll also notice the background for this cell is blue, because this cell value is also different from the original table.
 
 
-If you are interested in the prototype, you can view some of my progress [here](https://github.com/mattkumar/flexdiff)
+If you are interested in the code for this example, you can view some of my progress [here](https://github.com/mattkumar/flexdiff).
+
 
 Thanks!
