@@ -57,7 +57,7 @@ df2 %>% flextable()
 # Comparing with diffdf
 The `diffdf` package can be used to find and return differences between two data frames. 
 
-Below I create an object named `deltas` that will store the results of the `diffdf()` call on the two data frames I created. I've specified that df1 is the base (or "original") and that df2 is the comparator.
+Below I create an object named `deltas` that will store the results of the `diffdf()` call on the two data frames. I've specified that df1 is the base (or "original") and that df2 is the comparator.
 
 ```{r}
 deltas <- diffdf(base=df1, compare=df2)
@@ -74,9 +74,9 @@ deltas$VarDiff_sex
 deltas$VarDiff_smk
 ```
 
-Within each of the variable tibbles, the value of `VARIABLE` gives a natural column index, while the value of `..ROWNUMBER..` gives a row index. Together, these coordinates provide us a road map of precisely which cells in df2 differ from those in df1.
+Within each tibble, the value of `VARIABLE` gives a natural column index, while the value of `..ROWNUMBER..` gives a row index. Together, these form coordinates that provide us a road map of precisely which cells in df2 differ from those in df1.
 
-We need to extract, clean and store each variables results so that this information can be readily used for styling. In this example, I use a loop to account for many variables at once.
+Now, we need to extract, clean and store each variables results so that this information can be readily used for styling. In this example, I use a loop to account for many variables at once. My end result is stored in `delta_data`.
 
 ```{r}
 #get variable names
@@ -95,12 +95,14 @@ for(i in var_list) {
 #put all found cell difference coordinates into a single data frame
 delta_data = do.call(rbind, delta_list)
 
-#view
+#view results
 delta_data
 ```
 
 # Styling Differences
-We can now use `delta_data` to style the flextable for df2. Below are a few examples of how to do this.
+We can now use `delta_data` to style the flextable for df2. Below are a few examples of how one might do this. 
+
+My general approach to styling is to iterate over the rows of coordinates in `delta_data`.
 
 ## Background colors
 Change the background color for cells that differ.
@@ -128,7 +130,7 @@ df1 %>%
  
 
 ## Cell Borders
-Adding a border around cells that differ. Note: This requires the `officer` package. 
+Adding a border around cells that differ. Note: This requires the `officer` package. `officer` and `flextable` actually complement each other really well and I suggest you check it out for your work flows! 
 
 ```{r}
 library(officer)
@@ -170,7 +172,7 @@ df2 %>%
 ```
 
 ## Combining Styles
-It's straight forward to combine styling functions using the pipe operator.
+It's straight forward to combine or stack styles using the pipe operator.
 
 ```{r}
 df2 %>% 
@@ -207,7 +209,7 @@ In flextable, you can use a variety of formatting techniques to draw attention t
 
 # Use Case
 
-As part of my current responsibilities, I receieve pre-computed statistical tables that are saved as data sets (e.g. .sas7bdat, .csv). I import these into R as data frames for further processing. 
+As part of my current role, I receieve pre-computed statistical tables that are saved as data sets (e.g. .sas7bdat, .csv). I import these into R as data frames for further processing. 
 
 Given that this work flow is well established, I looked at whether comparisons between statistical tables were feasible with the approach outlined in this tutorial. One of the primary aims would be to detect changes between versions of pre-computed statistical tables. 
 
@@ -222,15 +224,19 @@ In the second panel, I have an updated version of a table.
 
 I've setup the following schema to highlight differences:
 
-* Cell differences are in sky blue, with a border
-* New columns are in pink, with a border
-* New rows are highlighted in green
-* I have a hardcoded a rule to highlight in yellow the prescence of `-9999` in the `P` column. 
+* Cell differences have a sky blue background with a border
+
+* New columns have a pink background with a border
+
+* New rows have text highlighted in green
+
+* I have a hardcoded a rule to highlight the prescence of `-9999` in the `P` column in yellow. 
   + The background for this cell is blue, because this cell value is also different from the original table.
+
 
 
 If you are interested in the code for this example, you can view some of my progress [here](https://github.com/mattkumar/flexdiff).
 
-I'd like to thank my colleague Robert (R.A.) for the inspiration to scale my learnings into something potentially useful across our team.
+I'd like to thank my colleague Robert (R.A) for the inspiration to scale my learnings into something potentially useful across our team.
 
-Thanks!
+Matt

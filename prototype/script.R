@@ -52,59 +52,66 @@ extra_rows <- data.frame(data.frame(deltas$ExtRowsComp)) %>%
   janitor::clean_names()
 
 #flextables
-df_1 %>%
-  flextable() %>%
-  autofit() %>%
-  flextable::align(align="left", part="body") %>%
-  flextable::padding(j=1, i=indent_df_1, padding.left = 20, part="body") %>%
-  flextable::bold(j=1, i=bold_df_1, part="body")
+ft1 <- df_1 %>%
+        flextable() %>%
+        autofit() %>%
+        flextable::align(align="left", part="body") %>%
+        flextable::padding(j=1, i=indent_df_1, padding.left = 20, part="body") %>%
+        flextable::bold(j=1, i=bold_df_1, part="body")
 
 
 
-df_2 %>%
-  #Cell Differences
-  flextable() %>%
-  (function(x){
-    for (i in 1:nrow(delta_data)) {
-      x <- highlight(x, 
-                     i=delta_data$rownumber[[i]], 
-                     j=delta_data$variable[[i]], 
-                     color="skyblue", 
-                     part="body") %>% 
-           bold(i=delta_data$rownumber[[i]], 
-                j=delta_data$variable[[i]])
-    }
-    x
-  })() %>%
-  
-  #Extra Rows
-  (function(x){
-    for (i in 1:nrow(extra_rows)) {
-      x <- color(x, 
-                 i=extra_rows$rownumber[[i]], 
-                 color="red", 
-                 part="body") 
-    }
-    x
-  })() %>%
-  
-  #Extra Columns
-  (function(x){
-    for (i in 1:nrow(extra_cols)) {
-      x <-  border(x, 
-               i=NULL,  
-               j=extra_cols$columns[[i]],
-               border = fp_border(color = "green", style="dashed", width=1.5), 
-               part = "all")   
+ft2 <- df_2 %>%
+        #Cell Differences
+        flextable() %>%
+        (function(x){
+          for (i in 1:nrow(delta_data)) {
+            x <- highlight(x, 
+                           i=delta_data$rownumber[[i]], 
+                           j=delta_data$variable[[i]], 
+                           color="skyblue", 
+                           part="body") %>% 
+                 bold(i=delta_data$rownumber[[i]], 
+                      j=delta_data$variable[[i]])
+          }
+          x
+        })() %>%
+        
+        #Extra Rows
+        (function(x){
+          for (i in 1:nrow(extra_rows)) {
+            x <- color(x, 
+                       i=extra_rows$rownumber[[i]], 
+                       color="red", 
+                       part="body") 
+          }
+          x
+        })() %>%
+        
+        #Extra Columns
+        (function(x){
+          for (i in 1:nrow(extra_cols)) {
+            x <-  border(x, 
+                     i=NULL,  
+                     j=extra_cols$columns[[i]],
+                     border = fp_border(color = "green", style="dashed", width=1.5), 
+                     part = "all")   
+            
+          }
+          x
+        })() %>%
+        autofit() %>%
+        align(align="left", part="body") %>%
+        padding(j=1, i=indent_df_2, padding.left = 20, part="body") %>%
+        bold(j=1, i=bold_df_2, part="body") %>%
+        highlight(j="P", i = ~ P == "-9999", color = "yellow", part="body")
       
-    }
-    x
-  })() %>%
-  autofit() %>%
-  align(align="left", part="body") %>%
-  padding(j=1, i=indent_df_2, padding.left = 20, part="body") %>%
-  bold(j=1, i=bold_df_2, part="body") %>%
-  highlight(j="P", i = ~ P == "-9999", color = "yellow", part="body")
 
+#view
+ft1
+ft2
 
-
+#from here, its not a big leap to transplant this into a flexdashboard / shinyapp with an 'upload csv' widget.
+#this is on the assumption that the tables are in a predictable format
+      
+      
