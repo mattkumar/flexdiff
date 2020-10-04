@@ -122,7 +122,7 @@ df2 %>%
   })()
 ```
 
-`df1` side by side for comparisons.
+Here is df1 again for comparisons.
 ```{r}
 df1 %>%
   flextable()
