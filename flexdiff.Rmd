@@ -240,3 +240,22 @@ If you are interested in the code for this example, you can view some of my prog
 I'd like to thank my colleague Robert (R.A) for the inspiration to scale my learnings into something potentially useful across our team.
 
 Matt
+
+# Use Case App
+
+2020-11-10: Since publishing this original tutorial, we've made some progress in porting the use case into an app! 
+
+In the panel below, we have an interface that let's the user specify which kinds of differences should be highlighted and by which color. The eventual goal is give the user the ability to specify their own tables.
+
+Click the image to enlarge.
+
+![](assets/sc1.png)
+
+Once the tables are reviewed, I offer a download button to provide the user an offline version of the updated table as a word document (.docx). There is a check box that allows the user to specify whether the "markup" should be retained. Below is a screen shot of the downloaded document. 
+
+Click the image to enlarge.
+
+![](assets/sc2.png)
+
+Please stay tuned for future developments. I hope to be able to post the code related to this progress very soon! In the meantime, you can still view the guts [here.](https://github.com/mattkumar/flexdiff)
+
